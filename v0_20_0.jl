@@ -1,4 +1,6 @@
 # awscli automatically installs python. So this isn't a python-less rootfs-image
+# Install gdb separately
+# Adding it to the list of packages results in failure of version resolution and systemd
 
 using RootfsUtils: parse_build_args, upload_gha, test_sandbox
 using RootfsUtils: debootstrap
@@ -13,28 +15,17 @@ image        = args.image
 packages = [
     "bash",
     "locales",
-    "zip",
-    "unzip",
     "git",
 
-    # Work around bug in debootstrap where virtual dependencies are not properly installed
-    # X-ref: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=878961
-    # X-ref: https://bugs.launchpad.net/ubuntu/+source/debootstrap/+bug/86536
-    "perl-openssl-defaults",
-    "dbus-user-session",
-  
+    "curl",
+    "vim",
+    "lldb",
+
     # Get a C compiler, for compiling python extensions
     "build-essential",
     # Get latex, so that we can invoke `pdflatex` and friends
     "texlive-latex-extra",
-    "awscli",
-
-    # These are just for debugging
-    "curl",
-    "vim",
-    "gdb",
-    # "gdb-minimal",
-    "lldb"
+    "awscli"
 ]
 
 # artifact_hash, tarball_path, = debootstrap(arch, image; archive, packages, release)
@@ -44,9 +35,13 @@ artifact_hash, tarball_path, = debootstrap(arch, image; archive, packages, relea
 
     @info("fixing systemd...")
     dpkg_fix_cmd = """
-    apt install --reinstall systemd
+    dpkg --configure -a
+    apt-get update
+    apt-get upgrade
+    apt-get -y install gdb
     """
     my_chroot(dpkg_fix_cmd)
 end
 
 test_sandbox(artifact_hash)
+
