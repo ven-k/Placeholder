@@ -1,4 +1,4 @@
-# Adds `g++` to https://github.com/JuliaCI/rootfs-images/blob/main/linux/aws_uploader.jl
+# Modified https://github.com/JuliaCI/rootfs-images/commit/00640956a6c0637b32b0943975dbc3e904463cb5
 
 using RootfsUtils: parse_build_args, upload_gha, test_sandbox
 using RootfsUtils: debootstrap
