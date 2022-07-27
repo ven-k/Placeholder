@@ -18,10 +18,9 @@ packages = [
     "gpg-agent",
     "locales",
     "localepurge",
-    "make",
+    "build-essential",
     "openssh-client",
     "vim",
-    "g++"
 ]
 
 artifact_hash, tarball_path, = debootstrap(arch, image; archive, packages)
